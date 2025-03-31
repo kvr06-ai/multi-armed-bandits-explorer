@@ -11,7 +11,6 @@ function App() {
   const [results, setResults] = useState<SimulationResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [showDescription, setShowDescription] = useState(true)
   
   useEffect(() => {
     const fetchConfigData = async () => {
@@ -42,17 +41,11 @@ function App() {
       
       setResults(response)
       setLoading(false)
-      // Hide description when showing results
-      setShowDescription(false)
     } catch (err: unknown) {
       console.error('Simulation error:', err)
       setError('Simulation failed: ' + (err instanceof Error ? err.message : 'Unknown error'))
       setLoading(false)
     }
-  }
-  
-  const toggleDescription = () => {
-    setShowDescription(!showDescription)
   }
   
   if (error && !algorithms.length && !distributions.length) {
@@ -77,34 +70,34 @@ function App() {
         <div className="client-side-note">
           <small>All simulations run in your browser - no server required!</small>
         </div>
-        <button 
-          onClick={toggleDescription} 
-          className="toggle-description-btn"
-        >
-          {showDescription ? "Hide Description" : "Show Description"}
-        </button>
       </header>
       
-      <main>
-        {showDescription && <ToolDescription />}
-        
-        <ConfigurationPanel 
-          algorithms={algorithms} 
-          distributions={distributions}
-          onRunSimulation={handleRunSimulation}
-          loading={loading}
-        />
+      <div className="description-container">
+        <ToolDescription />
+      </div>
+      
+      <div className="content-container">
+        <div className="configuration-area">
+          <ConfigurationPanel 
+            algorithms={algorithms} 
+            distributions={distributions}
+            onRunSimulation={handleRunSimulation}
+            loading={loading}
+          />
+          
+          {error && (
+            <div className="error-message">
+              <p>{error}</p>
+            </div>
+          )}
+        </div>
         
         {results && (
-          <ResultsDisplay results={results.results} />
-        )}
-        
-        {error && (
-          <div className="error-message">
-            <p>{error}</p>
+          <div className="results-area">
+            <ResultsDisplay results={results.results} />
           </div>
         )}
-      </main>
+      </div>
       
       <footer>
         <p>Built for educational purposes | <a href="https://github.com/kvr06-ai/multi-armed-bandits-explorer" target="_blank" rel="noopener noreferrer">GitHub</a></p>

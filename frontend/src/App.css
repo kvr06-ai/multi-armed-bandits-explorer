@@ -325,9 +325,7 @@ footer a:hover {
 }
 
 main {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
+  display: block;
 }
 
 @media (min-width: 992px) {
@@ -366,6 +364,7 @@ main {
 input, select, button {
   font-family: inherit;
   font-size: 14px;
+  color: #333;
 }
 
 input[type="number"] {
@@ -374,13 +373,16 @@ input[type="number"] {
   border: 1px solid #ddd;
   border-radius: 4px;
   margin-right: 10px;
+  background-color: #000;
+  color: #fff;
 }
 
 select {
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  background-color: white;
+  background-color: #fff;
+  color: #333;
   min-width: 150px;
 }
 
@@ -625,7 +627,7 @@ button.remove-button:hover {
   background-color: #f8f9fa;
   border-radius: 8px;
   padding: 20px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
@@ -637,37 +639,61 @@ button.remove-button:hover {
 }
 
 .description-section {
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
 .description-section h3 {
-  color: #3498db;
-  margin-bottom: 10px;
+  font-size: 16px;
+  margin-bottom: 8px;
 }
 
 .description-section ul, 
 .description-section ol {
   padding-left: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .description-section li {
-  margin-bottom: 8px;
-  line-height: 1.5;
+  margin-bottom: 5px;
+  line-height: 1.4;
 }
 
+.tool-description p {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+/* Updated Layout Structure */
+.description-container {
+  margin-bottom: 30px;
+}
+
+.content-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 992px) {
+  .content-container {
+    grid-template-columns: minmax(300px, 1fr) 2fr;
+  }
+}
+
+.configuration-area {
+  display: flex;
+  flex-direction: column;
+}
+
+.results-area {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Remove toggle button styles since we're not using it anymore */
 .toggle-description-btn {
-  background-color: #6c757d;
-  color: white;
-  border: none;
-  padding: 5px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 10px;
-  font-size: 0.9rem;
-}
-
-.toggle-description-btn:hover {
-  background-color: #5a6268;
+  display: none;
 }
 
 /* Algorithm Selector Improved Styles */
@@ -700,6 +726,8 @@ button.remove-button:hover {
   border-radius: 4px;
   font-size: 1rem;
   min-width: 200px;
+  background-color: #fff;
+  color: #333;
 }
 
 .remove-button {
