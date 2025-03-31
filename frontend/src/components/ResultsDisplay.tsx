@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import Plot from 'react-plotly.js';
 import { SimulationResult } from '../types';
+import ResultsInterpretation from './ResultsInterpretation';
 
 interface ResultsDisplayProps {
   results: SimulationResult[];
 }
 
 const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
-  const [activeTab, setActiveTab] = useState<'reward' | 'regret' | 'armCounts'>('reward');
+  const [activeTab, setActiveTab] = useState<'reward' | 'regret' | 'armCounts' | 'interpretation'>('reward');
   
   if (!results || results.length === 0) {
     return <div className="no-results">No simulation results to display</div>;
@@ -229,15 +230,22 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
         >
           Arm Selection Counts
         </button>
+        <button
+          className={activeTab === 'interpretation' ? 'active' : ''}
+          onClick={() => setActiveTab('interpretation')}
+        >
+          Interpretation
+        </button>
       </div>
       
       <div className="chart-container">
         {activeTab === 'reward' && renderRewardChart()}
         {activeTab === 'regret' && renderRegretChart()}
         {activeTab === 'armCounts' && renderArmCountsChart()}
+        {activeTab === 'interpretation' && <ResultsInterpretation results={results} />}
       </div>
       
-      {renderSummaryTable()}
+      {activeTab !== 'interpretation' && renderSummaryTable()}
     </div>
   );
 };

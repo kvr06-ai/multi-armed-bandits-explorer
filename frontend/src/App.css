@@ -375,6 +375,21 @@ input[type="number"] {
   margin-right: 10px;
   background-color: #000;
   color: #fff;
+  cursor: text;
+  font-size: 14px;
+  text-align: center;
+}
+
+input[type="number"]:focus {
+  outline: 2px solid #4a90e2;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+}
+
+/* Hide the spin buttons on number inputs for a cleaner look */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  opacity: 1;
+  height: 20px;
 }
 
 select {
@@ -782,4 +797,44 @@ button.remove-button:hover {
   border: 1px solid #ced4da;
   border-radius: 4px;
   width: 120px;
+}
+
+/* Results Interpretation Styles */
+.results-interpretation {
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.results-interpretation h2 {
+  color: #2c3e50;
+  margin-top: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.interpretation-section {
+  margin-top: 20px;
+}
+
+.interpretation-section h3 {
+  color: #3498db;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.interpretation-section p {
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.interpretation-section strong {
+  color: #2c3e50;
+}
+
+/* Make the chart container adapt to the interpretation content */
+.chart-container {
+  height: auto;
+  min-height: 300px;
 }
