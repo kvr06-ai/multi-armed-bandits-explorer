@@ -33,6 +33,22 @@ echo "Setting up backend..."
 # Create backend directory structure if it doesn't exist
 mkdir -p backend/app/api/endpoints backend/app/models backend/app/core
 
+# Ensure settings.py exists to avoid CORS issues
+if [ ! -f "backend/app/core/settings.py" ]; then
+    echo "Creating settings.py for CORS configuration..."
+    cat > backend/app/core/settings.py << 'EOL'
+"""Application settings."""
+from pydantic import BaseModel
+
+class Settings(BaseModel):
+    PROJECT_NAME: str = "Multi-Armed Bandit Explorer API"
+    API_PREFIX: str = "/api/v1"
+    BACKEND_CORS_ORIGINS: list = ["http://localhost:5173"]  # Frontend origin
+    
+settings = Settings()
+EOL
+fi
+
 # Start the backend server
 echo "Starting the backend server..."
 cd backend

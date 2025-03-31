@@ -55,6 +55,50 @@ TypeError: conlist() got an unexpected keyword argument 'min_items'
    - Replace `conlist` with `List` and `Field(..., min_length=2)`
    - Use `model_validator` instead of `validator`
 
+### Problem: CORS Issues
+
+If you see errors in the browser console like:
+
+```
+Access to XMLHttpRequest at 'http://localhost:8000/api/v1/simulations' 
+from origin 'http://localhost:5173' has been blocked by CORS policy: 
+No 'Access-Control-Allow-Origin' header is present on the requested resource.
+```
+
+or 
+
+```
+Failed to load resource: net::ERR_FAILED
+```
+
+**Solution**:
+1. Make sure the backend has proper CORS configuration in `main.py`:
+   ```python
+   from fastapi.middleware.cors import CORSMiddleware
+   
+   app.add_middleware(
+       CORSMiddleware,
+       allow_origins=["http://localhost:5173"],  # Frontend origin
+       allow_credentials=True,
+       allow_methods=["*"],
+       allow_headers=["*"],
+   )
+   ```
+
+2. Ensure the `settings.py` file exists in `backend/app/core/` with the following content:
+   ```python
+   from pydantic import BaseModel
+   
+   class Settings(BaseModel):
+       PROJECT_NAME: str = "Multi-Armed Bandit Explorer API"
+       API_PREFIX: str = "/api/v1"
+       BACKEND_CORS_ORIGINS: list = ["http://localhost:5173"]
+   
+   settings = Settings()
+   ```
+
+3. Restart both the frontend and backend servers to apply the changes.
+
 ## Frontend Issues
 
 ### Problem: Failed to Load Configuration Data
