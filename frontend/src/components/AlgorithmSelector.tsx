@@ -92,30 +92,33 @@ const AlgorithmSelector: React.FC<AlgorithmSelectorProps> = ({
     <div className="algorithm-selector">
       {selectedAlgorithms.map((item, index) => {
         const currentAlgo = availableAlgorithms.find(algo => algo.id === item.algorithm.id);
+        const algoName = currentAlgo ? currentAlgo.name : 'Select an algorithm';
         
         return (
           <div key={item.setup_id} className="algorithm-item">
             <div className="algorithm-header">
-              <select
-                value={item.algorithm.id}
-                onChange={(e) => handleAlgorithmChange(index, e.target.value)}
-              >
-                {availableAlgorithms.map(algo => (
-                  <option key={algo.id} value={algo.id}>
-                    {algo.name}
-                  </option>
-                ))}
-              </select>
-              
-              {selectedAlgorithms.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => handleRemoveAlgorithm(index)}
-                  className="remove-button"
+              <div className="algorithm-select-container">
+                <label>Algorithm {index + 1}:</label>
+                <select
+                  value={item.algorithm.id}
+                  onChange={(e) => handleAlgorithmChange(index, e.target.value)}
+                  className="algorithm-select"
                 >
-                  Remove
-                </button>
-              )}
+                  {availableAlgorithms.map(algo => (
+                    <option key={algo.id} value={algo.id}>
+                      {algo.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <button
+                type="button"
+                onClick={() => handleRemoveAlgorithm(index)}
+                className="remove-button"
+              >
+                Remove
+              </button>
             </div>
             
             {currentAlgo && currentAlgo.params.length > 0 && (

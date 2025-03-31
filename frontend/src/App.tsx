@@ -3,6 +3,7 @@ import './App.css'
 import { API, Algorithm, Distribution, SimulationRequest, SimulationResponse } from './api/client'
 import ConfigurationPanel from './components/ConfigurationPanel'
 import ResultsDisplay from './components/ResultsDisplay'
+import ToolDescription from './components/ToolDescription'
 
 function App() {
   const [algorithms, setAlgorithms] = useState<Algorithm[]>([])
@@ -10,6 +11,7 @@ function App() {
   const [results, setResults] = useState<SimulationResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showDescription, setShowDescription] = useState(true)
   
   useEffect(() => {
     const fetchConfigData = async () => {
@@ -40,11 +42,17 @@ function App() {
       
       setResults(response)
       setLoading(false)
+      // Hide description when showing results
+      setShowDescription(false)
     } catch (err: unknown) {
       console.error('Simulation error:', err)
       setError('Simulation failed: ' + (err instanceof Error ? err.message : 'Unknown error'))
       setLoading(false)
     }
+  }
+  
+  const toggleDescription = () => {
+    setShowDescription(!showDescription)
   }
   
   if (error && !algorithms.length && !distributions.length) {
@@ -69,9 +77,17 @@ function App() {
         <div className="client-side-note">
           <small>All simulations run in your browser - no server required!</small>
         </div>
+        <button 
+          onClick={toggleDescription} 
+          className="toggle-description-btn"
+        >
+          {showDescription ? "Hide Description" : "Show Description"}
+        </button>
       </header>
       
       <main>
+        {showDescription && <ToolDescription />}
+        
         <ConfigurationPanel 
           algorithms={algorithms} 
           distributions={distributions}
