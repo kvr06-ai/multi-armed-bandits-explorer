@@ -1,82 +1,88 @@
 import React from 'react';
-import { ArmConfig, DistributionDefinition, DistributionParams } from '../types';
+import { Distribution } from '../api/client';
 
 interface BanditProblemConfigProps {
-  arms: ArmConfig[];
-  distributions: DistributionDefinition[];
-  onUpdateArms: (arms: ArmConfig[]) => void;
+  banditProblem: {
+    arms: {
+      distribution: {
+        id: string;
+        params: Record<string, number>;
+      };
+    }[];
+  };
+  onBanditProblemChange: (problem: any) => void;
+  availableDistributions: Distribution[];
 }
 
 const BanditProblemConfig: React.FC<BanditProblemConfigProps> = ({
-  arms,
-  distributions,
-  onUpdateArms
+  banditProblem,
+  onBanditProblemChange,
+  availableDistributions
 }) => {
-  // Handle adding a new arm
+  
   const handleAddArm = () => {
-    if (distributions.length === 0) return;
+    if (availableDistributions.length === 0) return;
     
-    const defaultDistribution = distributions[0];
-    const defaultParams: DistributionParams = {};
+    const defaultDist = availableDistributions[0];
+    const params: Record<string, number> = {};
     
-    // Set default values for distribution parameters
-    defaultDistribution.params.forEach(param => {
-      defaultParams[param.id] = param.default;
-    });
-    
-    // Add a new arm with default distribution
-    onUpdateArms([
-      ...arms,
-      {
-        distribution: {
-          id: defaultDistribution.id,
-          params: defaultParams
-        }
-      }
-    ]);
-  };
-  
-  // Handle removing an arm
-  const handleRemoveArm = (index: number) => {
-    if (arms.length <= 2) {
-      alert("A bandit problem must have at least 2 arms");
-      return;
-    }
-    
-    const newArms = [...arms];
-    newArms.splice(index, 1);
-    onUpdateArms(newArms);
-  };
-  
-  // Handle changing an arm's distribution type
-  const handleDistributionChange = (index: number, distributionId: string) => {
-    const distribution = distributions.find(dist => dist.id === distributionId);
-    
-    if (!distribution) return;
-    
-    // Initialize parameters with default values
-    const params: DistributionParams = {};
-    distribution.params.forEach(param => {
+    // Set default parameters
+    defaultDist.params.forEach(param => {
       params[param.id] = param.default;
     });
     
-    // Update the specified arm
-    const newArms = [...arms];
-    newArms[index] = {
-      distribution: {
-        id: distributionId,
-        params
-      }
-    };
-    
-    onUpdateArms(newArms);
+    onBanditProblemChange({
+      ...banditProblem,
+      arms: [
+        ...banditProblem.arms,
+        {
+          distribution: {
+            id: defaultDist.id,
+            params
+          }
+        }
+      ]
+    });
   };
   
-  // Handle changing an arm's distribution parameter
-  const handleParamChange = (armIndex: number, paramId: string, value: any) => {
-    const newArms = [...arms];
+  const handleRemoveArm = (index: number) => {
+    const newArms = [...banditProblem.arms];
+    newArms.splice(index, 1);
+    onBanditProblemChange({
+      ...banditProblem,
+      arms: newArms
+    });
+  };
+  
+  const handleDistributionChange = (index: number, distId: string) => {
+    const newArms = [...banditProblem.arms];
+    const selectedDist = availableDistributions.find(dist => dist.id === distId);
     
-    // Update the parameter value
+    if (selectedDist) {
+      const params: Record<string, number> = {};
+      
+      // Set default parameters for the new distribution
+      selectedDist.params.forEach(param => {
+        params[param.id] = param.default;
+      });
+      
+      newArms[index] = {
+        ...newArms[index],
+        distribution: {
+          id: distId,
+          params
+        }
+      };
+      
+      onBanditProblemChange({
+        ...banditProblem,
+        arms: newArms
+      });
+    }
+  };
+  
+  const handleParamChange = (armIndex: number, paramId: string, value: number) => {
+    const newArms = [...banditProblem.arms];
     newArms[armIndex] = {
       ...newArms[armIndex],
       distribution: {
@@ -88,38 +94,41 @@ const BanditProblemConfig: React.FC<BanditProblemConfigProps> = ({
       }
     };
     
-    onUpdateArms(newArms);
+    onBanditProblemChange({
+      ...banditProblem,
+      arms: newArms
+    });
   };
   
   return (
     <div className="bandit-problem-config">
-      <div className="arms-list">
-        {arms.map((arm, index) => {
-          // Find distribution definition for this arm
-          const distributionDef = distributions.find(
-            dist => dist.id === arm.distribution.id
-          );
+      <div className="arms-container">
+        {banditProblem.arms.map((arm, index) => {
+          const currentDist = availableDistributions.find(dist => dist.id === arm.distribution.id);
           
           return (
-            <div key={index} className="arm-config">
+            <div key={index} className="arm-item">
               <div className="arm-header">
                 <h4>Arm {index + 1}</h4>
-                <button
-                  type="button"
-                  onClick={() => handleRemoveArm(index)}
-                  className="remove-btn"
-                >
-                  Remove
-                </button>
+                {banditProblem.arms.length > 2 && (
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveArm(index)}
+                    className="remove-button"
+                  >
+                    Remove
+                  </button>
+                )}
               </div>
               
-              <div className="form-group">
-                <label>Distribution:</label>
+              <div className="distribution-selector">
+                <label htmlFor={`arm-${index}-dist`}>Distribution:</label>
                 <select
+                  id={`arm-${index}-dist`}
                   value={arm.distribution.id}
                   onChange={(e) => handleDistributionChange(index, e.target.value)}
                 >
-                  {distributions.map(dist => (
+                  {availableDistributions.map(dist => (
                     <option key={dist.id} value={dist.id}>
                       {dist.name}
                     </option>
@@ -127,38 +136,26 @@ const BanditProblemConfig: React.FC<BanditProblemConfigProps> = ({
                 </select>
               </div>
               
-              {distributionDef && distributionDef.params.map(param => (
-                <div key={param.id} className="form-group">
-                  <label>{param.name}:</label>
-                  {param.type === 'float' || param.type === 'int' ? (
-                    <input
-                      type="number"
-                      step={param.type === 'float' ? 'any' : 1}
-                      min={param.min}
-                      max={param.max}
-                      value={arm.distribution.params[param.id] ?? param.default}
-                      onChange={(e) => {
-                        const newValue = param.type === 'int'
-                          ? parseInt(e.target.value, 10)
-                          : parseFloat(e.target.value);
-                        handleParamChange(index, param.id, newValue);
-                      }}
-                    />
-                  ) : (
-                    <input
-                      type="checkbox"
-                      checked={arm.distribution.params[param.id] ?? param.default}
-                      onChange={(e) => handleParamChange(index, param.id, e.target.checked)}
-                    />
-                  )}
-                  
-                  {param.min !== undefined && param.max !== undefined && (
-                    <span className="param-range">
-                      Range: {param.min} - {param.max}
-                    </span>
-                  )}
+              {currentDist && (
+                <div className="distribution-params">
+                  {currentDist.params.map(param => (
+                    <div key={param.id} className="param-item">
+                      <label htmlFor={`arm-${index}-param-${param.id}`}>
+                        {param.name}:
+                      </label>
+                      <input
+                        id={`arm-${index}-param-${param.id}`}
+                        type="number"
+                        min={param.min !== undefined ? param.min : undefined}
+                        max={param.max !== undefined ? param.max : undefined}
+                        step="0.01"
+                        value={arm.distribution.params[param.id] || param.default}
+                        onChange={(e) => handleParamChange(index, param.id, parseFloat(e.target.value))}
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           );
         })}
@@ -167,7 +164,7 @@ const BanditProblemConfig: React.FC<BanditProblemConfigProps> = ({
       <button
         type="button"
         onClick={handleAddArm}
-        className="add-arm-btn"
+        className="add-button"
       >
         Add Arm
       </button>

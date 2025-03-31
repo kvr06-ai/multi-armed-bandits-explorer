@@ -17,12 +17,12 @@ This tool allows you to:
 - **Algorithm Selection**: Choose from Epsilon-Greedy, UCB1, and Thompson Sampling algorithms
 - **Interactive Visualizations**: See how algorithms perform over time
 - **Algorithm Comparison**: Run multiple algorithms on the same problem for direct comparison
+- **Client-Side Implementation**: All simulations run directly in your browser - no server required!
 
 ## Getting Started
 
 ### Prerequisites
 
-- Python 3.7+
 - Node.js 14+
 - npm or yarn
 
@@ -31,24 +31,14 @@ This tool allows you to:
 1. Clone the repository
 
 ```bash
-git clone https://github.com/yourusername/multi-armed-bandits-explorer.git
+git clone https://github.com/kvr06-ai/multi-armed-bandits-explorer.git
 cd multi-armed-bandits-explorer
 ```
 
-2. Set up the backend
+2. Set up the frontend
 
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install --upgrade pip setuptools wheel
-pip install -r requirements.txt
-```
-
-3. Set up the frontend
-
-```bash
-cd ../frontend
+cd frontend
 npm install  # or yarn
 ```
 
@@ -63,21 +53,9 @@ chmod +x run.sh
 ./run.sh
 ```
 
-This will start both the backend and frontend servers.
+This will start the frontend server.
 
 #### Manual Start
-
-1. Start the backend server
-
-```bash
-cd backend
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-python main.py
-```
-
-The server will start at http://localhost:8000
-
-2. Start the frontend development server
 
 ```bash
 cd frontend
@@ -90,9 +68,18 @@ The application will be available at http://localhost:5173
 
 If you encounter any issues running the application, please see [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for solutions to common problems.
 
+## How It Works
+
+This application is completely client-side, with all bandit algorithms implemented in TypeScript. The simulation runs in your browser, providing immediate feedback without requiring a server connection.
+
+Key components:
+- **Bandit Algorithms**: Implementation of popular MAB algorithms (Epsilon-Greedy, UCB1, Thompson Sampling)
+- **Arm Distributions**: Bernoulli and Gaussian reward distributions
+- **Simulation Engine**: Runs multiple trials and aggregates results
+- **Visualization**: Interactive charts to explore algorithm performance
+
 ## Technology Stack
 
-- **Backend**: FastAPI, NumPy, SciPy
 - **Frontend**: React, TypeScript, Plotly.js
 - **Styling**: CSS
 

@@ -271,3 +271,351 @@ button {
 .app-footer a:hover {
   text-decoration: underline;
 }
+
+/* Main App Structure */
+.app-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+header {
+  background-color: #4a90e2;
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+header p {
+  margin: 8px 0 0;
+  opacity: 0.9;
+}
+
+.client-side-note {
+  margin-top: 10px;
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.2);
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+footer {
+  margin-top: 40px;
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+}
+
+footer a {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+main {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 992px) {
+  main {
+    grid-template-columns: minmax(300px, 1fr) 2fr;
+  }
+}
+
+/* Configuration Panel */
+.configuration-panel {
+  background-color: #f5f7fa;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.configuration-panel h2 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.config-section {
+  margin-bottom: 25px;
+}
+
+.config-section h3 {
+  font-size: 18px;
+  color: #444;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+/* Form Elements */
+input, select, button {
+  font-family: inherit;
+  font-size: 14px;
+}
+
+input[type="number"] {
+  width: 100px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+select {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+  min-width: 150px;
+}
+
+label {
+  display: inline-block;
+  margin-right: 10px;
+  font-weight: 500;
+}
+
+.setting-help {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+/* Buttons */
+button {
+  padding: 8px 16px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #3a7bc8;
+}
+
+button:disabled {
+  background-color: #94b8e0;
+  cursor: not-allowed;
+}
+
+button.remove-button {
+  background-color: #e74c3c;
+}
+
+button.remove-button:hover {
+  background-color: #c0392b;
+}
+
+.add-button {
+  margin-top: 15px;
+  background-color: #2ecc71;
+}
+
+.add-button:hover {
+  background-color: #27ae60;
+}
+
+.run-button {
+  font-size: 16px;
+  padding: 10px 20px;
+  width: 100%;
+  background-color: #3498db;
+  margin-top: 15px;
+}
+
+.run-button:hover {
+  background-color: #2980b9;
+}
+
+.run-section {
+  margin-top: 30px;
+}
+
+/* Algorithm Selector */
+.algorithm-item {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.algorithm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.algorithm-params {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  padding: 10px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+
+.param-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.param-item label {
+  margin-bottom: 5px;
+  font-weight: normal;
+}
+
+/* Bandit Problem Config */
+.arm-item {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.arm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.arm-header h4 {
+  margin: 0;
+}
+
+.distribution-selector {
+  margin-bottom: 15px;
+}
+
+.distribution-params {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  padding: 10px;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+
+/* Simulation Settings */
+.simulation-settings {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.setting-item {
+  margin-bottom: 15px;
+}
+
+.setting-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Results Display */
+.results-display {
+  background-color: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.results-display h2 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.results-tabs {
+  display: flex;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  padding: 10px 15px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: #666;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.tab-button.active {
+  border-bottom-color: #4a90e2;
+  color: #4a90e2;
+  font-weight: 500;
+}
+
+.chart-container {
+  height: 400px;
+  margin-bottom: 30px;
+}
+
+.results-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.summary-card {
+  background-color: #f5f7fa;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.summary-card h3 {
+  margin-top: 0;
+  font-size: 16px;
+  color: #444;
+}
+
+.summary-value {
+  font-size: 24px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Error Message */
+.error-container {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 40px 0;
+  text-align: center;
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  border-radius: 6px;
+  margin-top: 20px;
+}

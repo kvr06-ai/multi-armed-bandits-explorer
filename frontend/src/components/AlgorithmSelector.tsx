@@ -1,131 +1,154 @@
-import React, { useState, useEffect } from 'react';
-import { AlgorithmDefinition, SetupConfig, ParameterDefinition } from '../types';
+import React from 'react';
+import { Algorithm } from '../api/client';
 
 interface AlgorithmSelectorProps {
-  algorithms: AlgorithmDefinition[];
-  setup: SetupConfig;
-  onUpdateSetup: (updatedSetup: SetupConfig) => void;
+  selectedAlgorithms: {
+    setup_id: string;
+    algorithm: {
+      id: string;
+      params: Record<string, number>;
+    };
+  }[];
+  onSelectedAlgorithmsChange: (algorithms: any) => void;
+  availableAlgorithms: Algorithm[];
 }
 
 const AlgorithmSelector: React.FC<AlgorithmSelectorProps> = ({
-  algorithms,
-  setup,
-  onUpdateSetup
+  selectedAlgorithms,
+  onSelectedAlgorithmsChange,
+  availableAlgorithms
 }) => {
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState<AlgorithmDefinition | null>(null);
   
-  // Find the selected algorithm from the list when setup changes
-  useEffect(() => {
-    const algorithm = algorithms.find(alg => alg.id === setup.algorithm.id) || null;
-    setSelectedAlgorithm(algorithm);
-  }, [algorithms, setup.algorithm.id]);
-  
-  // Handle algorithm change
-  const handleAlgorithmChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const algorithmId = e.target.value;
-    const algorithm = algorithms.find(alg => alg.id === algorithmId);
+  const handleAddAlgorithm = () => {
+    if (availableAlgorithms.length === 0) return;
     
-    if (algorithm) {
-      // Initialize parameters with default values
-      const params: Record<string, any> = {};
-      algorithm.params.forEach(param => {
+    const defaultAlgo = availableAlgorithms[0];
+    const params: Record<string, number> = {};
+    
+    // Set default parameters
+    defaultAlgo.params.forEach(param => {
+      params[param.id] = param.default;
+    });
+    
+    onSelectedAlgorithmsChange([
+      ...selectedAlgorithms,
+      {
+        setup_id: `Algo-${Date.now()}`,
+        algorithm: {
+          id: defaultAlgo.id,
+          params
+        }
+      }
+    ]);
+  };
+  
+  const handleRemoveAlgorithm = (index: number) => {
+    const newAlgorithms = [...selectedAlgorithms];
+    newAlgorithms.splice(index, 1);
+    onSelectedAlgorithmsChange(newAlgorithms);
+  };
+  
+  const handleAlgorithmChange = (index: number, algorithmId: string) => {
+    const newAlgorithms = [...selectedAlgorithms];
+    const selectedAlgo = availableAlgorithms.find(algo => algo.id === algorithmId);
+    
+    if (selectedAlgo) {
+      const params: Record<string, number> = {};
+      
+      // Set default parameters for the new algorithm
+      selectedAlgo.params.forEach(param => {
         params[param.id] = param.default;
       });
       
-      // Update setup
-      onUpdateSetup({
-        ...setup,
+      newAlgorithms[index] = {
+        ...newAlgorithms[index],
         algorithm: {
           id: algorithmId,
           params
         }
-      });
+      };
+      
+      onSelectedAlgorithmsChange(newAlgorithms);
     }
   };
   
-  // Handle parameter change
-  const handleParamChange = (paramId: string, value: any) => {
-    onUpdateSetup({
-      ...setup,
+  const handleParamChange = (index: number, paramId: string, value: number) => {
+    const newAlgorithms = [...selectedAlgorithms];
+    newAlgorithms[index] = {
+      ...newAlgorithms[index],
       algorithm: {
-        ...setup.algorithm,
+        ...newAlgorithms[index].algorithm,
         params: {
-          ...setup.algorithm.params,
+          ...newAlgorithms[index].algorithm.params,
           [paramId]: value
         }
       }
-    });
-  };
-  
-  // Render parameter input based on parameter type
-  const renderParameterInput = (param: ParameterDefinition) => {
-    const value = setup.algorithm.params[param.id] ?? param.default;
+    };
     
-    switch (param.type) {
-      case 'float':
-      case 'int':
-        return (
-          <input
-            type="number"
-            step={param.type === 'float' ? 'any' : 1}
-            min={param.min}
-            max={param.max}
-            value={value}
-            onChange={(e) => {
-              const newValue = param.type === 'int' 
-                ? parseInt(e.target.value, 10) 
-                : parseFloat(e.target.value);
-              handleParamChange(param.id, newValue);
-            }}
-          />
-        );
-      
-      case 'bool':
-        return (
-          <input
-            type="checkbox"
-            checked={value}
-            onChange={(e) => handleParamChange(param.id, e.target.checked)}
-          />
-        );
-      
-      default:
-        return <input type="text" value={value} readOnly />;
-    }
+    onSelectedAlgorithmsChange(newAlgorithms);
   };
   
   return (
     <div className="algorithm-selector">
-      <div className="form-group">
-        <label>Algorithm:</label>
-        <select 
-          value={setup.algorithm.id} 
-          onChange={handleAlgorithmChange}
-        >
-          {algorithms.map(algorithm => (
-            <option key={algorithm.id} value={algorithm.id}>
-              {algorithm.name}
-            </option>
-          ))}
-        </select>
-      </div>
-      
-      {selectedAlgorithm && selectedAlgorithm.params.length > 0 && (
-        <div className="algorithm-params">
-          <h4>Parameters</h4>
-          {selectedAlgorithm.params.map(param => (
-            <div key={param.id} className="form-group">
-              <label>{param.name}:</label>
-              {renderParameterInput(param)}
-              {param.min !== undefined && param.max !== undefined && (
-                <span className="param-range">
-                  Range: {param.min} - {param.max}
-                </span>
+      {selectedAlgorithms.map((item, index) => {
+        const currentAlgo = availableAlgorithms.find(algo => algo.id === item.algorithm.id);
+        
+        return (
+          <div key={item.setup_id} className="algorithm-item">
+            <div className="algorithm-header">
+              <select
+                value={item.algorithm.id}
+                onChange={(e) => handleAlgorithmChange(index, e.target.value)}
+              >
+                {availableAlgorithms.map(algo => (
+                  <option key={algo.id} value={algo.id}>
+                    {algo.name}
+                  </option>
+                ))}
+              </select>
+              
+              {selectedAlgorithms.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => handleRemoveAlgorithm(index)}
+                  className="remove-button"
+                >
+                  Remove
+                </button>
               )}
             </div>
-          ))}
-        </div>
-      )}
+            
+            {currentAlgo && currentAlgo.params.length > 0 && (
+              <div className="algorithm-params">
+                {currentAlgo.params.map(param => (
+                  <div key={param.id} className="param-item">
+                    <label htmlFor={`${item.setup_id}-${param.id}`}>
+                      {param.name}:
+                    </label>
+                    <input
+                      id={`${item.setup_id}-${param.id}`}
+                      type="number"
+                      min={param.min !== undefined ? param.min : undefined}
+                      max={param.max !== undefined ? param.max : undefined}
+                      step="0.01"
+                      value={item.algorithm.params[param.id] || param.default}
+                      onChange={(e) => handleParamChange(index, param.id, parseFloat(e.target.value))}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
+      
+      <button
+        type="button"
+        onClick={handleAddAlgorithm}
+        className="add-button"
+      >
+        Add Algorithm
+      </button>
     </div>
   );
 };

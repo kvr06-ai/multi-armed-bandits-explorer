@@ -1,46 +1,62 @@
 import React from 'react';
 
 interface SimulationSettingsProps {
-  numSteps: number;
-  numRuns: number;
-  onUpdateNumSteps: (steps: number) => void;
-  onUpdateNumRuns: (runs: number) => void;
+  settings: {
+    num_steps: number;
+    num_runs: number;
+  };
+  onSettingsChange: (settings: any) => void;
 }
 
 const SimulationSettings: React.FC<SimulationSettingsProps> = ({
-  numSteps,
-  numRuns,
-  onUpdateNumSteps,
-  onUpdateNumRuns
+  settings,
+  onSettingsChange
 }) => {
+  
+  const handleNumStepsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Math.max(1, parseInt(event.target.value, 10));
+    onSettingsChange({
+      ...settings,
+      num_steps: value
+    });
+  };
+  
+  const handleNumRunsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = Math.max(1, parseInt(event.target.value, 10));
+    onSettingsChange({
+      ...settings,
+      num_runs: value
+    });
+  };
+  
   return (
     <div className="simulation-settings">
-      <div className="form-group">
-        <label>Number of Steps:</label>
+      <div className="setting-item">
+        <label htmlFor="num-steps">Number of Steps:</label>
         <input
+          id="num-steps"
           type="number"
-          min={10}
-          max={10000}
-          value={numSteps}
-          onChange={(e) => onUpdateNumSteps(parseInt(e.target.value, 10))}
+          min="1"
+          value={settings.num_steps}
+          onChange={handleNumStepsChange}
         />
-        <span className="setting-description">
-          Number of arm pulls per simulation run
-        </span>
+        <p className="setting-help">
+          How many times each algorithm will pull arms during the simulation.
+        </p>
       </div>
       
-      <div className="form-group">
-        <label>Number of Runs:</label>
+      <div className="setting-item">
+        <label htmlFor="num-runs">Number of Runs:</label>
         <input
+          id="num-runs"
           type="number"
-          min={1}
-          max={100}
-          value={numRuns}
-          onChange={(e) => onUpdateNumRuns(parseInt(e.target.value, 10))}
+          min="1"
+          value={settings.num_runs}
+          onChange={handleNumRunsChange}
         />
-        <span className="setting-description">
-          Number of independent simulation runs to average results over
-        </span>
+        <p className="setting-help">
+          How many times to repeat the simulation for averaging results.
+        </p>
       </div>
     </div>
   );
